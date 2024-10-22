@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You Are An Idiot</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin-top: 50px;
+        }
+        #annoyingMessage {
+            font-size: 2rem;
+            color: red;
+        }
+        #stopButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="annoyingMessage">YOU ARE AN IDIOT!!</div>
+    <button id="stopButton">Stop Annoyance</button>
+
+    <audio id="annoyingSound" loop>
+        <source src="https://www.myinstants.com/media/sounds/trollololol.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        let shouldAnnoy = true;
+        const sound = document.getElementById('annoyingSound');
+        sound.play(); // Start playing the annoying sound
+
+        // Function to pop up alerts in a loop
+        function annoyUser() {
+            if (shouldAnnoy) {
+                alert("YOU ARE AN IDIOT!!");
+                setTimeout(annoyUser, 1000); // Repeat after 1 second
+            }
+        }
+
+        // Start the annoying process
+        annoyUser();
+
+        // Create bouncing windows
+        let windowsOpened = 0;
+        const maxWindows = 10;
+        const bounceWindows = [];
+
+        // Function to open a bouncing window
+        function openBouncingWindow() {
+            if (windowsOpened < maxWindows && shouldAnnoy) {
+                const newWin = window.open('', '', 'width=200,height=200');
+                newWin.document.write('<h1>YOU ARE AN IDIOT!!</h1>');
+                newWin.document.body.style.backgroundColor = "yellow";
+                newWin.document.body.style.color = "red";
+                bounceWindows.push(newWin);
+                startBouncing(newWin, windowsOpened); // Start moving the window
+                windowsOpened++;
+                setTimeout(openBouncingWindow, 500); // Open a new window every 0.5 seconds
+            }
+        }
+
+        openBouncingWindow();
+
+        // Start the bouncing effect
+        function startBouncing(win, index) {
+            let posX = Math.random() * screen.width * 0.8;  // Initial X position
+            let posY = Math.random() * screen.height * 0.8; // Initial Y position
+            let speedX = 5 + Math.random() * 5;  // Speed in X direction
+            let speedY = 5 + Math.random() * 5;  // Speed in Y direction
+            const bounceInterval = setInterval(function() {
+                if (!shouldAnnoy) {
+                    clearInterval(bounceInterval);
+                    if (win) win.close();
+                    return;
+                }
+
+                // Reverse direction when hitting the edges of the screen
+                if (posX + 200 >= screen.width || posX <= 0) speedX = -speedX;
+                if (posY + 200 >= screen.height || posY <= 0) speedY = -speedY;
+
+                // Update the position
+                posX += speedX;
+                posY += speedY;
+
+                // Move the window to the new position
+                if (win) win.moveTo(posX, posY);
+            }, 50); // Move the window every 50ms
+        }
+
+        // Stop button functionality to exit the annoyance
+        document.getElementById('stopButton').addEventListener('click', function() {
+            shouldAnnoy = false;
+            sound.pause(); // Stop the sound
+            alert("Annoyance stopped!");
+
+            // Close all open windows
+            bounceWindows.forEach(function(win) {
+                if (win && !win.closed) win.close();
+            });
+        });
+    </script>
+</body>
+</html>
